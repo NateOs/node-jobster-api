@@ -25,14 +25,15 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+//* hash password
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   // next(); use either async/await or call next()
 });
 
-// this is an instance method, allows you to abstract logic, and keep controller clean
-UserSchema.methods.createJWT = () => {
+//* this is an instance method, allows you to abstract logic, and keep controller clean
+UserSchema.methods.createJWT = function () {
   return jwt.sign(
     { userId: this._id, name: this.name },
     process.env.JWT_SECRET,
@@ -40,6 +41,11 @@ UserSchema.methods.createJWT = () => {
       expiresIn: process.env.JWT_LIFETIME,
     },
   );
+};
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
 };
 
 module.exports = mongoose.model("User", UserSchema);
