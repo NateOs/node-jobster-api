@@ -10,7 +10,7 @@ const auth = async (req, res, next) => {
     throw new UnauthenticatedError("Authentication invalid");
   }
 
-  const token = authHeader.split("")[1];
+  const token = authHeader.split(" ")[1];
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
@@ -21,8 +21,9 @@ const auth = async (req, res, next) => {
     };
 
     next();
-  } catch (err) {
-    throw new UNauthenticatedError("Authentication failed");
+  } catch (error) {
+    throw new UnauthenticatedError("Authentication failed");
   }
 };
+
 module.exports = auth;
