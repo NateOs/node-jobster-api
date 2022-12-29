@@ -1,11 +1,32 @@
 const Job = require("../models/Job");
 const { StatusCodes } = require("http-status-codes");
+const { BadRequestError, NotFoundError } = require("../errors");
 
+// get all jobs
 const getAllJobs = async (req, res) => {
-  res.send("get all jobs");
+  const allJobs = await Job.find({ createdBy: req.user.userId }).sort(
+    "createdAt",
+  );
+  res.status(StatusCodes.OK).json({ allJobs, count: allJobs.length });
 };
+
+// get a new job with id and createdBy
 const getJob = async (req, res) => {
-  res.send("get job");
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req; //* nested destructuring obj
+
+  const job = await Job.findOne({
+    _id: jobId,
+    createdBy: userId,
+  });
+
+  if (!job) {
+    throw new NotFoundError(`Job ${jobId} not found`);
+  }
+
+  res.status(StatusCodes.OK).json({ job });
 };
 
 // create a new job
