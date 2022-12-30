@@ -67,7 +67,6 @@ const deleteJob = async (req, res) => {
     user: { userId },
     params: { id: jobId },
   } = req;
-  console.log(jobId);
 
   if (!jobId) {
     throw new BadRequestError(`Job not found with id ${jobId}`);
