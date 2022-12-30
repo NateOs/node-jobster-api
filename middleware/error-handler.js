@@ -17,8 +17,23 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.msg = `Duplicate value entered for ${Object.keys(
       err.keyValue,
     )} field, please choose another value`;
-    customError.statusCode = 400;
+    customError.statusCode = StatusCodes.BAD_REQUEST;
   }
+
+  // validation error response
+  if (err.name === "ValidationError") {
+    customError.msg = Object.values(err.errors)
+      .map((item) => item.message)
+      .join(",");
+    customError.statusCode = StatusCodes.BAD_REQUEST;
+  }
+  
+  // friendly cast error response
+  if (err.name === "CastError") {
+    customError.msg = `Please enter valid objecId`;
+    customError.statusCode = StatusCodes.NOT_FOUND;
+  }
+
   return res.status(customError.statusCode).json({ msg: customError.msg });
 };
 
