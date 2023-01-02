@@ -44,7 +44,9 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 app.get("/", (req, res) => {
-  res.send("finally works");
+  res.send(
+    "This is the simple job API, login first and proceed to make your API request.",
+  );
 });
 
 const port = process.env.PORT || 3000;
